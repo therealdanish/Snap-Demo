@@ -27,8 +27,8 @@ parts:
     plugin: python
    # python-version: python3
     source: demo-app/
-    build-packages: [python3.8-tk] 
-    stage-packages: [python3.8-tk]
+    build-packages: [python3-tk] 
+    stage-packages: [python3-tk]
     stage-snaps: [mir-kiosk-x11]
 
   debian-multiarch-triplet-provider-launch:
