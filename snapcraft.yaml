@@ -1,0 +1,61 @@
+name: x11-tkinter-demo     # YOUR SNAP NAME GOES HERE
+version: '0.1'                  # YOUR SNAP VERSION GOES HERE
+summary: example X11 kiosk      # YOUR SUMMARY GOES HERE
+description: example X11 kiosk  # YOUR DESCRIPTION GOES HERE
+base: core18
+confinement: strict
+grade: devel
+
+apps:
+  x11-tkinter-demo:
+#    daemon: simple
+#    restart-condition: always
+    command-chain:
+      - env-setup
+      - bin/debian-multiarch-triplet-provider-launch
+      - bin/tcltk-launch
+    command: usr/local/bin/x11_kiosk_launch $SNAP/bin/popup ### YOUR COMMAND GOES HERE
+
+architectures:
+  - build-on: amd64
+  - build-on: arm64
+  - build-on: armhf
+
+parts:
+  ### YOUR PART GOES HERE
+  popup:
+    plugin: python
+   # python-version: python3
+    source: demo-app/
+    build-packages: [python3.8-tk] 
+    stage-packages: [python3.8-tk]
+    stage-snaps: [mir-kiosk-x11]
+
+  debian-multiarch-triplet-provider-launch:
+    plugin: nil
+    stage-snaps:
+    - debian-multiarch-triplet-provider-launch
+
+  tcltk-launch:
+      plugin: nil
+      stage-snaps:
+        - tcltk-launch    
+
+# Needed by Mir and/or Xwayland
+layout:
+  /usr/share/X11:
+    bind: $SNAP/usr/share/X11
+  /usr/bin/xkbcomp:
+    symlink: $SNAP/usr/bin/xkbcomp
+  /usr/share/icons:
+    bind: $SNAP/usr/share/icons
+  /usr/share/fonts:
+    bind: $SNAP/usr/share/fonts
+  /etc/fonts:
+    bind: $SNAP/etc/fonts
+
+plugs:
+  opengl:         # For Mir
+  wayland:        # For Mir
+  network-bind:   # For Mir (to serve X11)
+
